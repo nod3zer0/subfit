@@ -94,8 +94,9 @@ def loadConfig(path, config):
 
 def loadLoginFile(path):
     with open(path) as f:
-        login = yaml.load(f, Loader=yaml.FullLoader)
-    return login
+        login_list = yaml.load(f, Loader=yaml.FullLoader)
+
+    return login_list
 
 def login(username, password):
     s = requests.Session()
@@ -124,7 +125,7 @@ def login(username, password):
 
 
 
-def upload_file_session(s, url, file_path):
+def upload_file_session(s, url, file_path, login_type):
     r = s.get(url, stream=True)
     # get delete file url
     r = s.get(url, stream=True)
@@ -152,6 +153,16 @@ def upload_file_session(s, url, file_path):
 
     soup = bs.BeautifulSoup(r.text,'lxml')
     supa = soup.find('input',attrs={'id' : 's_tkey'})
+    if (not supa):
+        print(colored("[ERR] not logged in", 'red'))
+        if (login_type == "prompt"):
+            print(colored("[INFO] wrong password or username", 'yellow'))
+        if (login_type == "login_file"):
+            print(colored("[INFO] wrong login_file", 'yellow'))
+        if (login_type == "browser_cookies"):
+            print(colored("[INFO] try going onto this adress in specified browser, then try again. Or use other type of authentification.", 'yellow'))
+            print(colored("[INFO] "+ url , 'yellow'))
+        exit(1)
     s_tkey = supa.get('value')
     supa = soup.find('input',attrs={'id' : 's_key'})
     s_key = supa.get('value')
@@ -184,7 +195,7 @@ def downloadFile(s, url, filename, downloadFolder):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
 
-    supa =  soup.find_all('a', string = filename, exist_ok=True)
+    supa =  soup.find_all('a', string = filename)
     downloadUrl = "https://www.vut.cz/studis" + supa[0]['href'].removeprefix(".")
     print("downloading file:" + filename + " from URL: " + downloadUrl)
     print(downloadUrl)
@@ -194,7 +205,7 @@ def downloadFile(s, url, filename, downloadFolder):
     else:
         print("Error")
     print(downloadFolder)
-    os.makedirs(downloadFolder)
+    os.makedirs(downloadFolder, exist_ok=True)
     with open(os.path.join(config["check_folder"],"downloaded"), 'wb') as f:
         r.raw.decode_content = True
         shutil.copyfileobj(r.raw, f)
@@ -223,11 +234,10 @@ else:
 # file_path = sys.argv[2]
 
 
-
+login_info = loadLoginFile(config["login_file"])
 
 if (config["login_type"] == "login_file"):
-    login_info = loadLoginFile(config["login_file"])
-    s = login();
+    s = login(login_info["username"], login_info["password"]);
 elif (config["login_type"] == "browser_cookies"):
     if (not config["browser"]):
         print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
@@ -252,7 +262,10 @@ elif (config["login_type"] == "browser_cookies"):
     s = requests.Session()
     s.cookies = cj
 elif (config["login_type"] == "prompt"):
-    username = input("Enter username: ")
+    if ("username" in login_info):
+        username = login_info["username"]
+    else:
+        username = input("Enter username: ")
     password = getpass.getpass(prompt='Enter password: ', stream=None)
     s = login(username, password)
 else:
@@ -268,7 +281,7 @@ if (config["archive_command"]):
         print(colored("[ERR] archive unsuccesfull",'red'))
         exit(1)
 
-upload_file_session(s, config["url"], config["file"])
+upload_file_session(s, config["url"], config["file"], config["login_type"])
 
 
 if (config["check"]):
