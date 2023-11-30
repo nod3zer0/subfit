@@ -6,7 +6,73 @@ import os
 import sys
 import time
 import config
+import getopt
+import yaml
 
+def parseArgs():
+
+    config = {}
+
+    argumentList = sys.argv[1:]
+
+    # Options
+    options = "hf:a:u:cb:l:t:"
+
+    # Long options
+    long_options = ["help","file=", "archive_command=", "upload_url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
+
+
+    try:
+        # Parsing argument
+        arguments, values = getopt.getopt(argumentList, options, long_options)
+
+        # checking each argument
+        for currentArgument, currentValue in arguments:
+
+            if currentArgument in ("-h", "--Help"):
+                print ("Displaying Help")
+            elif currentArgument in ("-f", "--file"):
+                config['file'] = currentValue
+            elif currentArgument in ("-a", "--archive_command"):
+                config['archive_command'] = currentValue
+            elif currentArgument in ("-u", "--upload_url"):
+                config['upload_url'] = currentValue
+            elif currentArgument in ("-c", "--check"):
+                config['check'] = True
+            elif currentArgument in ("-b", "--browser"):
+                config['browser'] = currentValue
+            elif currentArgument in ("-l", "--login_file"):
+                config['login_file'] = currentValue
+            elif currentArgument in ("-t", "--login_type"):
+                config['login_type'] = currentValue
+            elif currentArgument in ("-cb", "--check_folder"):
+                config['check_folder'] = currentValue
+            elif currentArgument in ("-cf", "--config_file"):
+                config['config_file'] = currentValue
+
+    except getopt.error as err:
+        # output error, and return with an error code
+        print (str(err))
+        sys.exit(2)
+    return config
+
+    """loads yaml config file
+    """
+def loadConfig(path, config):
+    with open(path) as f:
+        file_config = yaml.load(f, Loader=yaml.FullLoader)
+
+    # overwrite conly empty config values
+    for key in file_config:
+        if (not key in config):
+            config[key] = file_config[key]
+
+    return config
+
+def loadLoginFile(path):
+    with open(path) as f:
+        login = yaml.load(f, Loader=yaml.FullLoader)
+    return login
 
 def login():
     s = requests.Session()
@@ -116,6 +182,9 @@ def compareHashes(file1, file2):
         return True
     else:
         return False
+
+config = parseArgs()
+config = loadConfig("config.yaml", config)
 
 cj = browser_cookie3.brave()
 
