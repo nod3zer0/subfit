@@ -1,4 +1,5 @@
 import browser_cookie3
+from termcolor import colored, cprint
 import requests
 import bs4 as bs
 import shutil
@@ -8,6 +9,7 @@ import time
 import config
 import getopt
 import yaml
+import getpass
 
 def parseArgs():
 
@@ -19,7 +21,7 @@ def parseArgs():
     options = "hf:a:u:cb:l:t:"
 
     # Long options
-    long_options = ["help","file=", "archive_command=", "upload_url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
+    long_options = ["help","file=", "archive_command=", "url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
 
 
     try:
@@ -35,8 +37,8 @@ def parseArgs():
                 config['file'] = currentValue
             elif currentArgument in ("-a", "--archive_command"):
                 config['archive_command'] = currentValue
-            elif currentArgument in ("-u", "--upload_url"):
-                config['upload_url'] = currentValue
+            elif currentArgument in ("-u", "--url"):
+                config['url'] = currentValue
             elif currentArgument in ("-c", "--check"):
                 config['check'] = True
             elif currentArgument in ("-b", "--browser"):
@@ -67,6 +69,27 @@ def loadConfig(path, config):
         if (not key in config):
             config[key] = file_config[key]
 
+    if (not "url" in config):
+        print(colored("[ERR] url not specified", 'red'))
+        exit(1)
+    if (not "file" in config):
+        print(colored("[ERR] file not specified", 'red'))
+        exit(1)
+    if (not "login_type" in config or config["login_type"] is None):
+        config["login_type"] = "prompt"
+    if (config["login_type"] == "login_file"):
+        if (not "login_file" in config):
+            print(colored("[ERR] login_file not specified", 'red'))
+            exit(1)
+    elif (config["login_type"] == "browser_cookies"):
+        if (not "browser" in config):
+            print(colored("[ERR] browser not specified", 'red'))
+            exit(1)
+    elif ("check" in config and config["check"]):
+        if (not "check_folder" in config):
+            print(colored("[ERR] check_folder not specified", 'red'))
+            exit(1)
+
     return config
 
 def loadLoginFile(path):
@@ -74,7 +97,7 @@ def loadLoginFile(path):
         login = yaml.load(f, Loader=yaml.FullLoader)
     return login
 
-def login():
+def login(username, password):
     s = requests.Session()
 
     r = s.get("https://www.vut.cz/login/intra", stream=True)
@@ -89,8 +112,8 @@ def login():
     'login_form' : 1,
     'sentTime' : round(time.time()),
     'sv[fdkey]' : fdkey,
-    'LDAPlogin' : config.username,
-    'LDAPpasswd' : config.password,
+    'LDAPlogin' : username,
+    'LDAPpasswd' : password,
     'login' : ''
 
     }
@@ -157,11 +180,11 @@ def upload_file_session(s, url, file_path):
         print("Error")
     print("file uploaded")
 
-def downloadFile(s, url, filename):
+def downloadFile(s, url, filename, downloadFolder):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
 
-    supa =  soup.find_all('a', string = filename)
+    supa =  soup.find_all('a', string = filename, exist_ok=True)
     downloadUrl = "https://www.vut.cz/studis" + supa[0]['href'].removeprefix(".")
     print("downloading file:" + filename + " from URL: " + downloadUrl)
     print(downloadUrl)
@@ -170,7 +193,9 @@ def downloadFile(s, url, filename):
          print("OK")
     else:
         print("Error")
-    with open("downloaded", 'wb') as f:
+    print(downloadFolder)
+    os.makedirs(downloadFolder)
+    with open(os.path.join(config["check_folder"],"downloaded"), 'wb') as f:
         r.raw.decode_content = True
         shutil.copyfileobj(r.raw, f)
     print("file downloaded")
@@ -183,31 +208,78 @@ def compareHashes(file1, file2):
     else:
         return False
 
+
+
 config = parseArgs()
-config = loadConfig("config.yaml", config)
-
-cj = browser_cookie3.brave()
-
-#'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&registrace_zadani_id=988079&apid=268243'
-url = sys.argv[1]
-#'xceska06.zip'
-file_path = sys.argv[2]
-
-
-s = requests.Session()
-s.cookies = cj
-
-upload_file_session(s, url, file_path)
-
-
-print("checking if file was uploaded correctly.")
-downloadFile(s, url, os.path.basename(file_path))
-
-print("comparing hashes")
-if (compareHashes(file_path, "downloaded")):
-    print("upload succesfull: files are equal")
+if ("config_file" in config):
+    config = loadConfig(config["config_file"], config)
 else:
-    print("upload unsuccesfull: files are not equal")
+    config = loadConfig("config.yml", config)
+
+
+# #'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&registrace_zadani_id=988079&apid=268243'
+# url = sys.argv[1]
+# #'xceska06.zip'
+# file_path = sys.argv[2]
+
+
+
+
+if (config["login_type"] == "login_file"):
+    login_info = loadLoginFile(config["login_file"])
+    s = login();
+elif (config["login_type"] == "browser_cookies"):
+    if (not config["browser"]):
+        print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
+        exit(1)
+
+    if (config["browser"] == "chrome"):
+        cj = browser_cookie3.chrome()
+    elif (config["browser"] == "firefox"):
+        cj = browser_cookie3.firefox()
+    elif (config["browser"] == "brave"):
+        cj = browser_cookie3.brave()
+    elif (config["browser"] == "opera"):
+        cj = browser_cookie3.opera()
+    elif (config["browser"] == "edge"):
+        cj = browser_cookie3.edge()
+    elif (config["browser"] == "chromium"):
+        cj = browser_cookie3.chromium()
+    elif (config["browser"] == "vivaldi"):
+        cj = browser_cookie3.vivaldi()
+    elif (config["browser"] == "safari"):
+        cj = browser_cookie3.safari()
+    s = requests.Session()
+    s.cookies = cj
+elif (config["login_type"] == "prompt"):
+    username = input("Enter username: ")
+    password = getpass.getpass(prompt='Enter password: ', stream=None)
+    s = login(username, password)
+else:
+    print(colored("[ERR] login_type not specified", 'red'))
+    exit(1)
+
+# archive file
+if (config["archive_command"]):
+    res = os.system(config["archive_command"])
+    if (res == 0):
+        print(colored("[OK] archive succesfull",'green'))
+    else:
+        print(colored("[ERR] archive unsuccesfull",'red'))
+        exit(1)
+
+upload_file_session(s, config["url"], config["file"])
+
+
+if (config["check"]):
+    print("Checking if file was uploaded correctly.")
+    print("downloading file")
+    downloadFile(s, config["url"], os.path.basename(config["file"]), config["check_folder"])
+    print("comparing hashes")
+    if (compareHashes(config["file"], os.path.join(config["check_folder"],"downloaded"))):
+        print(colored("[OK] upload succesfull: files are equal", 'green'))
+    else:
+        print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
 
 
 

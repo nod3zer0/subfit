@@ -1,0 +1,17 @@
+# filepath to file to submit
+file:
+# command for creating archive (leave blank if you dont want to create archive)
+archive_command:
+# url of where to upload file
+upload_url:
+#compares hasesh of uploaded and local file after upload
+check_file_after_upload:
+#where to download file after uploading for hash checking
+#(folders will be created, files will be owerwritten!)
+downloaded_file_path:
+# for login with browser cookies fill in browser
+browser:
+# fill in path to yaml file with login information
+login_file:
+#broser_cokies/login_file/prompt
+login_type:
