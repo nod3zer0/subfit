@@ -1,61 +1,55 @@
 import browser_cookie3
 import requests
+import bs4 as bs
 import shutil
 import os
+import sys
 cj = browser_cookie3.brave()
 
+#'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&registrace_zadani_id=988079&apid=268243'
+url = sys.argv[1]
+#'xceska06.zip'
+file_path = sys.argv[2]
+
+# get delete file url
+r = requests.get(url, cookies=cj, stream=True)
+soup = bs.BeautifulSoup(r.text,'lxml')
+text1 = soup.find_all('a', string = "Smazat")
+
+# delete file if exists
+if (text1):
+    deleteUrl = "https://www.vut.cz/studis/" +text1[0]['href']
+    r = requests.get(deleteUrl, cookies=cj, stream=True)
+    print(r.status_code)
+    print("deleting file on URL: " +deleteUrl)
+
+# get keys
+print("getting keys")
+r = requests.get(url, cookies=cj, stream=True)
+print(r.status_code)
+soup = bs.BeautifulSoup(r.text,'lxml')
+supa = soup.find('input',attrs={'id' : 's_tkey'})
+s_tkey = supa.get('value')
+supa = soup.find('input',attrs={'id' : 's_key'})
+s_key = supa.get('value')
 
 
-def download_file(url, root_des_path='./'):
-    local_filename = url.split('/')[-1]
-    local_filename = os.path.join(root_des_path, local_filename)
-    # r = requests.get(link, cookies=cj)
-    with requests.get(url, cookies=cj, stream=True) as r:
-        with open(local_filename, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
-    return local_filename
-
-a = download_file("https://www.vut.cz/studis/zadani_soubor.php?reg_zadani_soubor_id=302118")
-
-#r = requests.get('https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&operation=delete&registrace_zadani_id=988079&reg_zadani_soubor_id=302098&apid=268243',cookies=cj, stream=True)
-
-url = 'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&registrace_zadani_id=988079&apid=268243'
-file_path = 'xceska06.zip'  # Replace this with your file path
-
-headers = {
-    'authority': 'www.vut.cz',
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-    'accept-language': 'en-US,en;q=0.9',
-    'cache-control': 'max-age=0',
-    'referer': 'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&operation=delete&registrace_zadani_id=988079&reg_zadani_soubor_id=302099&apid=268243',
-    'origin': 'https://www.vut.cz',
-    'sec-ch-ua': '"Brave";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Linux"',
-    'sec-fetch-dest': 'document',
-    'sec-fetch-mode': 'navigate',
-    'sec-fetch-site': 'same-origin',
-    'sec-fetch-user': '?1',
-    'sec-gpc': '1',
-    'upgrade-insecure-requests': '1',
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
-    # Add other necessary headers here
-}
-
-
+# file to upload
 files = {
     'soubor': open(file_path, 'rb')
 }
 
+# data to upload
 Data = {
-    's_tkey' : 'Cs0BfT6Cx0',
-    's_key' : 'c449b6526e',
+    's_tkey' : s_tkey,
+    's_key' : s_key,
     'formID' : 'formAddFile',
     'btnSubmit' : 1,
     'soubor' : open(file_path, 'rb')
 }
 
+# upload file
+print("uploading file...")
 response = requests.post(url,data=Data, cookies=cj, files=files)
-
 print(response.status_code)
-print(response.text)# This will display the response content
+print("file uploaded")
