@@ -1,3 +1,4 @@
+#!/bin/python3
 import browser_cookie3
 from termcolor import colored, cprint
 import requests
@@ -6,7 +7,6 @@ import shutil
 import os
 import sys
 import time
-import config
 import getopt
 import yaml
 import getpass
