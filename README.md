@@ -139,5 +139,5 @@ username: xlogin00
 
 ## TODO
 
-- [ ] moodle support
+- [ ] moodle (ELEARNING) support
 - [ ] support multiple files
