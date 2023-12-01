@@ -225,7 +225,7 @@ def downloadFile(s, url, filename, downloadFolder):
     else:
         print(colored("[ERR] response: " + r.status_code, 'red'))
         exit(1)
-    print(downloadFolder)
+    print("creating: " + downloadFolder)
     os.makedirs(downloadFolder, exist_ok=True)
     with open(os.path.join(config["check_folder"],"downloaded"), 'wb') as f:
         r.raw.decode_content = True
@@ -254,20 +254,13 @@ def get_subbmission_time(s,url):
 
 
 
-start_of_submission = datetime.now()
+start_of_submission = datetime.now().strftime(
+                  '%d.%m.%Y %H:%M:%S.%f')
 config = parseArgs()
 if ("config_file" in config):
     config = loadConfig(config["config_file"], config)
 else:
     config = loadConfig("config.yml", config)
-
-
-# #'https://www.vut.cz/studis/student.phtml?sn=zadani_odevzdani&registrace_zadani_id=988079&apid=268243'
-# url = sys.argv[1]
-# #'xceska06.zip'
-# file_path = sys.argv[2]
-
-
 
 login_info = loadLoginFile(config["login_file"])
 if (config["login_type"] == "login_file"):
