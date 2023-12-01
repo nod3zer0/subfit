@@ -1,7 +1,7 @@
 
 # AutoSubmit
 
-It is a simple script to submit your code to the online studis.
+It is a simple script to submit your project to the online studis.
 
 ## Features
 
