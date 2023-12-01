@@ -148,10 +148,10 @@ def upload_file_session(s, url, file_path, login_type):
 
     # delete file if exists
     if (text1):
+        print("getting delete url")
         deleteUrl = "https://www.vut.cz/studis/" +text1[0]['href']
         r = s.get(deleteUrl, stream=True)
         if (r.status_code == 200):
-
              print(colored("[OK] response: 200", 'green'))
         else:
             print(colored("[ERR] response: " + r.status_code, 'red'))
@@ -200,7 +200,7 @@ def upload_file_session(s, url, file_path, login_type):
     }
 
     # upload file
-    print("uploading file...")
+    print(colored("uploading file..."))
     response = s.post(url,data=Data, files=files)
     if (r.status_code == 200):
         print(colored("[OK] response: 200", 'green'))
