@@ -85,7 +85,7 @@ python3 autosubmit.py --config <path_to_config_file>
 1. create config file in your project folder
    1. set `file` to file you want to submit
    2. optionally set `archive_command` to command for creating archive
-   3. set `url` to submission url
+   3. set `url` to submission url ![submit_page](./docs/img/submit_page.png)
    4. optionally set `check` to true
       1. set `check_folder` to folder where to download file for checking
    5. set `login_type` to login type
@@ -124,7 +124,7 @@ Same values can be used as command line arguments, and they will override values
 
 - `file` - path to file to submit (short command line argument: `-f`)
 - `archive_command` - command for creating archive (leave blank if you dont want to create archive) (short command line argument: `-a`)
-- `url` - url of where to upload file (short command line argument: `-u`)
+- `url` - url of where to upload file (short command line argument: `-u`) ![submit_page](./docs/img/submit_page.png)
 - `check` - compares hashes of uploaded and local file after upload (short command line argument: `-c`)
 - `check_folder` - where to download file after uploading for hash checking (folders will be created, files will be owerwritten!)
 - `browser` - for login with browser cookies fill in browser. Needs to be used with `login_type browser_cookies` (optional: needs package `browser-cookie3`)
@@ -163,3 +163,4 @@ First it gets the page with submission form, and gets the s_key and s_tkey (whic
 
 - [ ] moodle (ELEARNING) support
 - [ ] support multiple files
+- [ ] git hook after merge/commit to master
