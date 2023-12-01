@@ -42,8 +42,8 @@ pip3 install -r requirements.txt
 ### install in usr/local/bin
 
 ```bash
-sudo cp AutoSubmit.py /usr/local/bin/AutoSubmit
-sudo chmod +x /usr/local/bin/AutoSubmit
+sudo cp submit.py /usr/local/bin/submit
+sudo chmod +x /usr/local/bin/submit
 ```
 
 ## Usage
@@ -53,19 +53,19 @@ sudo chmod +x /usr/local/bin/AutoSubmit
 Prompt for username and password:
 
 ```bash
-AutoSubmit --url <studis_submission_url> --file <file_to_submit>
+submit --url <studis_submission_url> --file <file_to_submit>
 ```
 
 Use login file:
 
 ```bash
-AutoSubmit --url <studis_submission_url> --file <file_to_submit> --login_file <login_file>
+submit --url <studis_submission_url> --file <file_to_submit> --login_file <login_file>
 ```
 
 Use cookie from browser:
 
 ```bash
-AutoSubmit --url <studis_submission_url> --file <file_to_submit> --cookie <cookie_name>
+submit --url <studis_submission_url> --file <file_to_submit> --cookie <cookie_name>
 ```
 
 ### with config file
@@ -73,13 +73,13 @@ AutoSubmit --url <studis_submission_url> --file <file_to_submit> --cookie <cooki
 Running in same folder as config file:
 
 ```bash
-AutoSubmit
+submit
 ```
 
 Running with config file in different folder:
 
 ```bash
-AutoSubmit --config <path_to_config_file>
+submit --config <path_to_config_file>
 ```
 
 ### Workflow
