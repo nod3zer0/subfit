@@ -24,10 +24,8 @@ start_of_submission=0
 def parseArgs():
     """parses arguments from command line
     """
-    config = {}
-
     argumentList = sys.argv[1:]
-
+    config = {}
     # Options
     options = "hf:a:u:cb:l:t:"
 
@@ -73,6 +71,10 @@ def parseArgs():
 def loadConfig(path, config):
     """loads yaml config file
     """
+    if (not os.path.isfile(path)):
+        print(colored("[ERR] config file not found", 'red'))
+        exit(1)
+
     with open(path) as f:
         file_config = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -104,7 +106,38 @@ def loadConfig(path, config):
 
     return config
 
+def checkConfig(config):
+    """checks if config is valid
+    """
+    if (not "url" in config):
+        print(colored("[ERR] url not specified", 'red'))
+        exit(1)
+    if (not "file" in config):
+        print(colored("[ERR] file not specified", 'red'))
+        exit(1)
+    if (not "login_type" in config or config["login_type"] is None):
+        config["login_type"] = "prompt"
+    if (config["login_type"] == "login_file"):
+        if (not "login_file" in config):
+            print(colored("[ERR] login_file not specified", 'red'))
+            exit(1)
+    elif (config["login_type"] == "browser_cookies"):
+        if (not "browser" in config):
+            print(colored("[ERR] browser not specified", 'red'))
+            exit(1)
+    elif ("check" in config and config["check"]):
+        if (not "check_folder" in config):
+            print(colored("[ERR] check_folder not specified", 'red'))
+            exit(1)
+
+    return config
+
 def loadLoginFile(path):
+
+    if (not os.path.isfile(path)):
+        print(colored("[ERR] login_file not found", 'red'))
+        exit(1)
+
     with open(path) as f:
         login_list = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -140,6 +173,13 @@ def login(username, password):
 def upload_file_session(s, url, file_path, login_type):
     """uploads file to specified url from studis
     """
+    if (not os.path.isfile(file_path)):
+        print(colored("[ERR] file not found", 'red'))
+        exit(1)
+    if (url is None or url == ""):
+        print(colored("[ERR] url not specified", 'red'))
+        exit(1)
+
     r = s.get(url, stream=True)
     # get delete file url
     r = s.get(url, stream=True)
@@ -256,13 +296,23 @@ def get_subbmission_time(s,url):
 
 start_of_submission = datetime.now().strftime(
                   '%d.%m.%Y %H:%M:%S.%f')
+
 config = parseArgs()
+
 if ("config_file" in config):
     config = loadConfig(config["config_file"], config)
-else:
+elif os.path.isfile("config.yml"):
     config = loadConfig("config.yml", config)
 
-login_info = loadLoginFile(config["login_file"])
+config = checkConfig(config)
+
+
+if ("login_file" in config and config["login_file"] is not None):
+    login_info = loadLoginFile(config["login_file"])
+else:
+    login_info = {}
+
+
 if (config["login_type"] == "login_file"):
     if (not "username" in login_info):
         print(colored("[ERR] username not specified in login_file", 'red'))
@@ -315,7 +365,8 @@ else:
     exit(1)
 
 # archive file
-if (config["archive_command"]):
+
+if ("archive_command" in config and config["archive_command"]):
     res = os.system(config["archive_command"])
     if (res == 0):
         print(colored("[OK] archive succesfull",'green'))
@@ -326,7 +377,7 @@ if (config["archive_command"]):
 upload_file_session(s, config["url"], config["file"], config["login_type"])
 
 
-if (config["check"]):
+if ("check" in config and config["check"]):
     print("Checking if file was uploaded correctly.")
     print("downloading file")
     downloadFile(s, config["url"], os.path.basename(config["file"]), config["check_folder"])
