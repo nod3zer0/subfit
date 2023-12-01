@@ -80,6 +80,18 @@ Running with config file in different folder:
 python3 autosubmit.py --config <path_to_config_file>
 ```
 
+### Workflow
+
+1. create config file in your project folder
+   1. set `file` to file you want to submit
+   2. optionally set `archive_command` to command for creating archive
+   3. set `url` to submission url
+   4. optionally set `check` to true
+      1. set `check_folder` to folder where to download file for checking
+   5. set `login_type` to login type
+      1. set `login_file` to path to login file
+2. run `autosubmit.py` in your project folder. The file will be submitted and checked if `check` is set to true.
+
 ## Config file
 
 The config file is a simple yaml file.
