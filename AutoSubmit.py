@@ -1,5 +1,4 @@
 #!/bin/python3
-import browser_cookie3
 from termcolor import colored, cprint
 import requests
 import bs4 as bs
@@ -10,7 +9,14 @@ import time
 import getopt
 import yaml
 import getpass
+# optional imports
+try:
+    import browser_cookie3
+except ImportError:
+    browser_cookie3 = None
 
+"""parses arguments from command line
+"""
 def parseArgs():
 
     config = {}
@@ -124,7 +130,8 @@ def login(username, password):
 
 
 
-
+    """uploads file to specified url from studis
+    """
 def upload_file_session(s, url, file_path, login_type):
     r = s.get(url, stream=True)
     # get delete file url
@@ -137,9 +144,11 @@ def upload_file_session(s, url, file_path, login_type):
         deleteUrl = "https://www.vut.cz/studis/" +text1[0]['href']
         r = s.get(deleteUrl, stream=True)
         if (r.status_code == 200):
-             print("OK")
+
+             print(colored("[OK] response: 200", 'green'))
         else:
-            print("Error")
+            print(colored("[ERR] response: " + r.status_code, 'red'))
+            exit(1)
         print("deleting file on URL: " +deleteUrl)
 
     # get keys
@@ -147,9 +156,10 @@ def upload_file_session(s, url, file_path, login_type):
     r = s.get(url, stream=True)
 
     if (r.status_code == 200):
-         print("OK")
+        print(colored("[OK] response: 200", 'green'))
     else:
-        print("Error")
+        print(colored("[ERR] response: " + r.status_code, 'red'))
+        exit(1)
 
     soup = bs.BeautifulSoup(r.text,'lxml')
     supa = soup.find('input',attrs={'id' : 's_tkey'})
@@ -186,11 +196,13 @@ def upload_file_session(s, url, file_path, login_type):
     print("uploading file...")
     response = s.post(url,data=Data, files=files)
     if (r.status_code == 200):
-         print("OK")
+        print(colored("[OK] response: 200", 'green'))
     else:
-        print("Error")
+        print(colored("[ERR] response: " + r.status_code, 'red'))
     print("file uploaded")
 
+""" downloads file from specified url from studis
+"""
 def downloadFile(s, url, filename, downloadFolder):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
@@ -201,9 +213,10 @@ def downloadFile(s, url, filename, downloadFolder):
     print(downloadUrl)
     r = s.get(downloadUrl, stream=True)
     if (r.status_code == 200):
-         print("OK")
+         print(colored("[OK] response: 200", 'green'))
     else:
-        print("Error")
+        print(colored("[ERR] response: " + r.status_code, 'red'))
+        exit(1)
     print(downloadFolder)
     os.makedirs(downloadFolder, exist_ok=True)
     with open(os.path.join(config["check_folder"],"downloaded"), 'wb') as f:
@@ -211,6 +224,8 @@ def downloadFile(s, url, filename, downloadFolder):
         shutil.copyfileobj(r.raw, f)
     print("file downloaded")
 
+""" compares hashes of two files
+"""
 def compareHashes(file1, file2):
     hash1 = os.system("md5sum " + file1)
     hash2 = os.system("md5sum " + file2)
@@ -234,11 +249,25 @@ else:
 # file_path = sys.argv[2]
 
 
-login_info = loadLoginFile(config["login_file"])
 
+login_info = loadLoginFile(config["login_file"])
 if (config["login_type"] == "login_file"):
+    if (not "username" in login_info):
+        print(colored("[ERR] username not specified in login_file", 'red'))
+        exit(1)
+    if (not "password" in login_info):
+        print(colored("[ERR] password not specified in login_file", 'red'))
+        exit(1)
     s = login(login_info["username"], login_info["password"]);
 elif (config["login_type"] == "browser_cookies"):
+
+    if (browser_cookie3 is None):
+        print(colored("[ERR] browser_cookie3 not installed", 'red'))
+        print(colored("[INFO] for enabling authentification with browser cookie install browser_cookie3 (pip3 install browser_cookie3)", 'yellow'))
+        print(colored("[INFO] or use other type of authentification (prompt, login_file)", 'yellow'))
+        exit(1)
+
+
     if (not config["browser"]):
         print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
         exit(1)
@@ -261,8 +290,9 @@ elif (config["login_type"] == "browser_cookies"):
         cj = browser_cookie3.safari()
     s = requests.Session()
     s.cookies = cj
-elif (config["login_type"] == "prompt"):
-    if ("username" in login_info):
+elif (config["login_type"] == "prompt" or config["login_type"] == "prompt_force"):
+    if ("username" in login_info and login_info["login_type"] == "prompt_force"):
+        print(colored("[INFO] using username form login_file, if you want to specify username use --login_type prompt_force", 'blue'))
         username = login_info["username"]
     else:
         username = input("Enter username: ")
@@ -296,4 +326,4 @@ if (config["check"]):
 
 
 
-#upload_file_cookie(cj, url, file_path)
+
