@@ -9,16 +9,21 @@ import time
 import getopt
 import yaml
 import getpass
+from datetime import datetime
+import re
 # optional imports
 try:
     import browser_cookie3
 except ImportError:
     browser_cookie3 = None
 
-"""parses arguments from command line
-"""
-def parseArgs():
+submission_time = 0
+start_of_submission=0
 
+
+def parseArgs():
+    """parses arguments from command line
+    """
     config = {}
 
     argumentList = sys.argv[1:]
@@ -64,9 +69,10 @@ def parseArgs():
         sys.exit(2)
     return config
 
+
+def loadConfig(path, config):
     """loads yaml config file
     """
-def loadConfig(path, config):
     with open(path) as f:
         file_config = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -130,9 +136,10 @@ def login(username, password):
 
 
 
+
+def upload_file_session(s, url, file_path, login_type):
     """uploads file to specified url from studis
     """
-def upload_file_session(s, url, file_path, login_type):
     r = s.get(url, stream=True)
     # get delete file url
     r = s.get(url, stream=True)
@@ -201,9 +208,10 @@ def upload_file_session(s, url, file_path, login_type):
         print(colored("[ERR] response: " + r.status_code, 'red'))
     print("file uploaded")
 
-""" downloads file from specified url from studis
-"""
+
 def downloadFile(s, url, filename, downloadFolder):
+    """ downloads file from specified url from studis
+    """
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
 
@@ -224,9 +232,10 @@ def downloadFile(s, url, filename, downloadFolder):
         shutil.copyfileobj(r.raw, f)
     print("file downloaded")
 
-""" compares hashes of two files
-"""
+
 def compareHashes(file1, file2):
+    """ compares hashes of two files
+    """
     hash1 = os.system("md5sum " + file1)
     hash2 = os.system("md5sum " + file2)
     if (hash1 == hash2):
@@ -234,8 +243,18 @@ def compareHashes(file1, file2):
     else:
         return False
 
+def get_subbmission_time(s,url):
+    """ gets submission file
+    """
+    r = s.get(url, stream=True)
+    soup = bs.BeautifulSoup(r.text,'lxml')
+    supa =  soup.find_all('small', string=True)
+    return supa[0].text
 
 
+
+
+start_of_submission = datetime.now()
 config = parseArgs()
 if ("config_file" in config):
     config = loadConfig(config["config_file"], config)
@@ -324,6 +343,8 @@ if (config["check"]):
     else:
         print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
 
-
-
+print("")
+print("All done")
+print("submission started: " + str(start_of_submission))
+print("time of submission: " + str(get_subbmission_time(s,config["url"])))
 
