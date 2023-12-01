@@ -108,14 +108,16 @@ login_type: login_file
 
 ## config values
 
-- `file` - path to file to submit
-- `archive_command` - command for creating archive (leave blank if you dont want to create archive)
-- `url` - url of where to upload file
-- `check` - compares hashes of uploaded and local file after upload
+Same values can be used as command line arguments, and they will override values in config file.
+
+- `file` - path to file to submit (short command line argument: `-f`)
+- `archive_command` - command for creating archive (leave blank if you dont want to create archive) (short command line argument: `-a`)
+- `url` - url of where to upload file (short command line argument: `-u`)
+- `check` - compares hashes of uploaded and local file after upload (short command line argument: `-c`)
 - `check_folder` - where to download file after uploading for hash checking (folders will be created, files will be owerwritten!)
-- `browser` - for login with browser cookies fill in browser
+- `browser` - for login with browser cookies fill in browser. Needs to be used with `login_type browser_cookies` (optional: needs package `browser-cookie3`)
 - `login_file` - fill in path to yaml file with login information
-- `login_type` - browser_cookies/login_file/prompt/prompt_force
+- `login_type` - browser_cookies/login_file/prompt/prompt_force (short command line argument: `-l`)
   - browser_cookies - get cookie from browser (optional: needs package `browser-cookie3`)
   - login_file - use login file (path specified in `login_file`)
   - prompt - prompt for username and password
