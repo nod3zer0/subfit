@@ -137,6 +137,16 @@ if there is only username, you can use prompt and it will ask only for password
 username: xlogin00
 ```
 
+## Theory
+
+### How does login work
+
+Each time login page is refreshed, it gets new sv[fdkey] from server. So this script first gets this value from login page, and then sends it back with username, password and timestamp, to get session cookie.
+
+### How does file submission work
+
+First it gets the page with submission form, and gets the s_key and s_tkey (which is new every time page gets refreshed). Then it sends the file these values and the session.
+
 ## TODO
 
 - [ ] moodle (ELEARNING) support
