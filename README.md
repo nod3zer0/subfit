@@ -53,19 +53,19 @@ sudo chmod +x /usr/local/bin/AutoSubmit
 Prompt for username and password:
 
 ```bash
-python3 autosubmit.py --url <studis_submission_url> --file <file_to_submit>
+AutoSubmit --url <studis_submission_url> --file <file_to_submit>
 ```
 
 Use login file:
 
 ```bash
-python3 AutoSubmit.py --url <studis_submission_url> --file <file_to_submit> --login_file <login_file>
+AutoSubmit --url <studis_submission_url> --file <file_to_submit> --login_file <login_file>
 ```
 
 Use cookie from browser:
 
 ```bash
-python3 AutoSubmit.py --url <studis_submission_url> --file <file_to_submit> --cookie <cookie_name>
+AutoSubmit --url <studis_submission_url> --file <file_to_submit> --cookie <cookie_name>
 ```
 
 ### with config file
@@ -73,13 +73,13 @@ python3 AutoSubmit.py --url <studis_submission_url> --file <file_to_submit> --co
 Running in same folder as config file:
 
 ```bash
-python3 AutoSubmit.py
+AutoSubmit
 ```
 
 Running with config file in different folder:
 
 ```bash
-python3 AutoSubmit.py --config <path_to_config_file>
+AutoSubmit --config <path_to_config_file>
 ```
 
 ### Workflow
