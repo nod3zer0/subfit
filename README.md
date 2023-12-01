@@ -12,6 +12,7 @@ It is a simple script to submit your project to the online studis.
   - get cookie from browser (optional: needs package `browser-cookie3`)
 - automaticly compress archive before submitting
 - check file hashes after submitting
+- getting time of submission
 
 ## What does it do when submitting
 
@@ -23,6 +24,7 @@ It is a simple script to submit your project to the online studis.
 5. checks if file was submitted correctly (`--check` option)
    1. downloads file into `--check_folder`
    2. compares hashes
+6. gets time of submission in studis, and prints its value
 
 ## Requirements
 
@@ -164,3 +166,4 @@ First it gets the page with submission form, and gets the s_key and s_tkey (whic
 - [ ] moodle (ELEARNING) support
 - [ ] support multiple files
 - [ ] git hook after merge/commit to master
+- [ ] save cookies for later use for faster submissions
