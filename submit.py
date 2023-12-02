@@ -17,9 +17,11 @@ try:
 except ImportError:
     browser_cookie3 = None
 
+
+
+
 submission_time = 0
 start_of_submission=0
-
 
 def parseArgs():
     """parses arguments from command line
@@ -30,7 +32,7 @@ def parseArgs():
     options = "hf:a:u:cb:l:t:"
 
     # Long options
-    long_options = ["help","file=", "archive_command=", "url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
+    long_options = ["help","config_file=","file=", "archive_command=", "url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
 
 
     try:
@@ -56,9 +58,9 @@ def parseArgs():
                 config['login_file'] = currentValue
             elif currentArgument in ("-t", "--login_type"):
                 config['login_type'] = currentValue
-            elif currentArgument in ("-cb", "--check_folder"):
+            elif currentArgument in ("--check_folder"):
                 config['check_folder'] = currentValue
-            elif currentArgument in ("-cf", "--config_file"):
+            elif currentArgument in ("--config_file"):
                 config['config_file'] = currentValue
 
     except getopt.error as err:
@@ -70,6 +72,7 @@ def parseArgs():
 
 def loadConfig(path, config):
     """loads yaml config file
+       replaces only empty config values
     """
     if (not os.path.isfile(path)):
         print(colored("[ERR] config file not found", 'red'))
@@ -133,6 +136,8 @@ def checkConfig(config):
     return config
 
 def loadLoginFile(path):
+    """loads login_file
+    """
 
     if (not os.path.isfile(path)):
         print(colored("[ERR] login_file not found", 'red'))
@@ -144,6 +149,8 @@ def loadLoginFile(path):
     return login_list
 
 def login(username, password):
+    """logs in to studis
+    """
     s = requests.Session()
 
     r = s.get("https://www.vut.cz/login/intra", stream=True)
@@ -170,7 +177,7 @@ def login(username, password):
 
 
 
-def upload_file_session(s, url, file_path, login_type):
+def upload_file(s, url, file_path, login_type):
     """uploads file to specified url from studis
     """
     if (not os.path.isfile(file_path)):
@@ -267,7 +274,7 @@ def downloadFile(s, url, filename, downloadFolder):
         exit(1)
     print("creating: " + downloadFolder)
     os.makedirs(downloadFolder, exist_ok=True)
-    with open(os.path.join(config["check_folder"],"downloaded"), 'wb') as f:
+    with open(os.path.join(downloadFolder,"downloaded"), 'wb') as f:
         r.raw.decode_content = True
         shutil.copyfileobj(r.raw, f)
     print("file downloaded")
@@ -283,7 +290,7 @@ def compareHashes(file1, file2):
     else:
         return False
 
-def get_subbmission_time(s,url):
+def get_submission_time(s,url):
     """ gets submission file
     """
     r = s.get(url, stream=True)
@@ -291,104 +298,115 @@ def get_subbmission_time(s,url):
     supa =  soup.find_all('small', string=True)
     return supa[0].text
 
+def get_session_by_login_type(login_type, login_file, browser):
+    """ gets session by login type
+    """
 
-
-
-start_of_submission = datetime.now().strftime(
-                  '%d.%m.%Y %H:%M:%S.%f')
-
-config = parseArgs()
-
-if ("config_file" in config):
-    config = loadConfig(config["config_file"], config)
-elif os.path.isfile("config.yml"):
-    config = loadConfig("config.yml", config)
-
-config = checkConfig(config)
-
-
-if ("login_file" in config and config["login_file"] is not None):
-    login_info = loadLoginFile(config["login_file"])
-else:
     login_info = {}
+    if (login_file is not None):
+        login_info = loadLoginFile(login_file)
 
 
-if (config["login_type"] == "login_file"):
-    if (not "username" in login_info):
-        print(colored("[ERR] username not specified in login_file", 'red'))
-        exit(1)
-    if (not "password" in login_info):
-        print(colored("[ERR] password not specified in login_file", 'red'))
-        exit(1)
-    s = login(login_info["username"], login_info["password"]);
-elif (config["login_type"] == "browser_cookies"):
+    if (login_type == "login_file"):
+        if (not "username" in login_info):
+            print(colored("[WARN] username not specified in login_file", 'orange'))
+            username = input("Enter username: ")
+        if (not "password" in login_info):
+            print(colored("[WARN] password not specified in login_file", 'orange'))
+            password = getpass.getpass(prompt='Enter password: ', stream=None)
+        s = login(login_info["username"], login_info["password"]);
+    elif (login_type == "browser_cookies"):
 
-    if (browser_cookie3 is None):
-        print(colored("[ERR] browser_cookie3 not installed", 'red'))
-        print(colored("[INFO] for enabling authentification with browser cookie install browser_cookie3 (pip3 install browser_cookie3)", 'yellow'))
-        print(colored("[INFO] or use other type of authentification (prompt, login_file)", 'yellow'))
-        exit(1)
+        if (browser_cookie3 is None):
+            print(colored("[ERR] browser_cookie3 not installed", 'red'))
+            print(colored("[INFO] for enabling authentification with browser cookie install browser_cookie3 (pip3 install browser_cookie3)", 'yellow'))
+            print(colored("[INFO] or use other type of authentification (prompt, login_file)", 'yellow'))
+            exit(1)
 
 
-    if (not config["browser"]):
-        print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
-        exit(1)
+        if (not browser or browser == ""):
+            print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
+            exit(1)
 
-    if (config["browser"] == "chrome"):
-        cj = browser_cookie3.chrome()
-    elif (config["browser"] == "firefox"):
-        cj = browser_cookie3.firefox()
-    elif (config["browser"] == "brave"):
-        cj = browser_cookie3.brave()
-    elif (config["browser"] == "opera"):
-        cj = browser_cookie3.opera()
-    elif (config["browser"] == "edge"):
-        cj = browser_cookie3.edge()
-    elif (config["browser"] == "chromium"):
-        cj = browser_cookie3.chromium()
-    elif (config["browser"] == "vivaldi"):
-        cj = browser_cookie3.vivaldi()
-    elif (config["browser"] == "safari"):
-        cj = browser_cookie3.safari()
-    s = requests.Session()
-    s.cookies = cj
-elif (config["login_type"] == "prompt" or config["login_type"] == "prompt_force"):
-    if ("username" in login_info and login_info["login_type"] == "prompt_force"):
-        print(colored("[INFO] using username form login_file, if you want to specify username use --login_type prompt_force", 'blue'))
-        username = login_info["username"]
-    else:
+        if (browser == "chrome"):
+            cj = browser_cookie3.chrome()
+        elif (browser == "firefox"):
+            cj = browser_cookie3.firefox()
+        elif (browser == "brave"):
+            cj = browser_cookie3.brave()
+        elif (browser == "opera"):
+            cj = browser_cookie3.opera()
+        elif (browser == "edge"):
+            cj = browser_cookie3.edge()
+        elif (browser == "chromium"):
+            cj = browser_cookie3.chromium()
+        elif (browser == "vivaldi"):
+            cj = browser_cookie3.vivaldi()
+        elif (browser == "safari"):
+            cj = browser_cookie3.safari()
+        s = requests.Session()
+        s.cookies = cj
+    elif (login_type == "prompt"):
         username = input("Enter username: ")
-    password = getpass.getpass(prompt='Enter password: ', stream=None)
-    s = login(username, password)
-else:
-    print(colored("[ERR] login_type not specified", 'red'))
-    exit(1)
+        password = getpass.getpass(prompt='Enter password: ', stream=None)
+        s = login(username, password)
+    else:
+        print(colored("[ERR] login_type not specified", 'red'))
+        exit(1)
+    return s
 
-# archive file
-
-if ("archive_command" in config and config["archive_command"]):
-    res = os.system(config["archive_command"])
+def archive_file(archive_command):
+    """ archives file with specified command
+    """
+    res = os.system(archive_command)
     if (res == 0):
         print(colored("[OK] archive succesfull",'green'))
     else:
         print(colored("[ERR] archive unsuccesfull",'red'))
         exit(1)
 
-upload_file_session(s, config["url"], config["file"], config["login_type"])
-
-
-if ("check" in config and config["check"]):
+def check_file_upload(s, url, file_path, check_folder):
+    """ checks if file was uploaded correctly
+    """
     print("Checking if file was uploaded correctly.")
     print("downloading file")
-    downloadFile(s, config["url"], os.path.basename(config["file"]), config["check_folder"])
+    downloadFile(s,  url, os.path.basename(file_path), check_folder)
     print("comparing hashes")
-    if (compareHashes(config["file"], os.path.join(config["check_folder"],"downloaded"))):
+    if (compareHashes(file_path, os.path.join(check_folder,"downloaded"))):
         print(colored("[OK] upload succesfull: files are equal", 'green'))
     else:
         print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
 
-print("")
-print("All done")
-print("submission started: " + str(start_of_submission))
-print("time of submission: " + str(get_subbmission_time(s,config["url"])))
 
+def main():
+
+    start_of_submission = datetime.now().strftime(
+                    '%d.%m.%Y %H:%M:%S.%f')
+
+    config = parseArgs()
+
+    if ("config_file" in config):
+        config = loadConfig(config["config_file"], config)
+    elif os.path.isfile("config.yml"):
+        config = loadConfig("config.yml", config)
+
+    config = checkConfig(config)
+
+    s = get_session_by_login_type(config["login_type"], config["login_file"] if "login_file" in config else None, config["browser"] if "browser" in config else None)
+
+    if ("archive_command" in config and config["archive_command"] != ""):
+        archive_file(config["archive_command"])
+
+    upload_file(s, config["url"], config["file"], config["login_type"])
+
+    if ("check" in config and config["check"]):
+        check_file_upload(s, config["url"], config["file"], config["check_folder"])
+
+
+    print("")
+    print("All done")
+    print("submission started: " + str(start_of_submission))
+    print("time of submission: " + str(get_submission_time(s,config["url"])))
+
+if __name__ == "__main__":
+    main()
