@@ -131,12 +131,11 @@ Same values can be used as command line arguments, and they will override values
 - `check_folder` - where to download file after uploading for hash checking (folders will be created, files will be owerwritten!)
 - `browser` - for login with browser cookies fill in browser. Needs to be used with `login_type browser_cookies` (optional: needs package `browser-cookie3`)
 - `login_file` - fill in path to yaml file with login information
-- `login_type` - browser_cookies/login_file/prompt/prompt_force (short command line argument: `-l`)
+- `login_type` - browser_cookies/login_file/prompt (short command line argument: `-l`)
   - browser_cookies - get cookie from browser (optional: needs package `browser-cookie3`)
   - login_file - use login file (path specified in `login_file`)
+    - if you specify only username, it will prompt for password
   - prompt - prompt for username and password
-    -  if there is a login file, it will use username from there
-  - prompt_force - prompt for username and password, even if there is a login file
 
 ## Example login file
 

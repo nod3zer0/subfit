@@ -309,11 +309,11 @@ def get_session_by_login_type(login_type, login_file, browser):
 
     if (login_type == "login_file"):
         if (not "username" in login_info):
-            print(colored("[WARN] username not specified in login_file", 'orange'))
-            username = input("Enter username: ")
+            print(colored("[WARN] username not specified in login_file", 'yellow'))
+            login_info["username"] = input("Enter username: ")
         if (not "password" in login_info):
-            print(colored("[WARN] password not specified in login_file", 'orange'))
-            password = getpass.getpass(prompt='Enter password: ', stream=None)
+            print(colored("[WARN] password not specified in login_file", 'yellow'))
+            login_info["password"] = getpass.getpass(prompt='Enter password: ', stream=None)
         s = login(login_info["username"], login_info["password"]);
     elif (login_type == "browser_cookies"):
 
