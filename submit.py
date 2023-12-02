@@ -23,7 +23,7 @@ except ImportError:
 submission_time = 0
 start_of_submission=0
 
-def parseArgs():
+def parse_args():
     """parses arguments from command line
     """
     argumentList = sys.argv[1:]
@@ -70,7 +70,7 @@ def parseArgs():
     return config
 
 
-def loadConfig(path, config):
+def load_config(path, config):
     """loads yaml config file
        replaces only empty config values
     """
@@ -109,7 +109,7 @@ def loadConfig(path, config):
 
     return config
 
-def checkConfig(config):
+def check_config(config):
     """checks if config is valid
     """
     if (not "url" in config):
@@ -135,7 +135,7 @@ def checkConfig(config):
 
     return config
 
-def loadLoginFile(path):
+def load_login_file(path):
     """loads login_file
     """
 
@@ -256,7 +256,7 @@ def upload_file(s, url, file_path, login_type):
     print("file uploaded")
 
 
-def downloadFile(s, url, filename, downloadFolder):
+def download_file(s, url, filename, downloadFolder):
     """ downloads file from specified url from studis
     """
     r = s.get(url, stream=True)
@@ -280,7 +280,7 @@ def downloadFile(s, url, filename, downloadFolder):
     print("file downloaded")
 
 
-def compareHashes(file1, file2):
+def compare_hashes(file1, file2):
     """ compares hashes of two files
     """
     hash1 = os.system("md5sum " + file1)
@@ -304,7 +304,7 @@ def get_session_by_login_type(login_type, login_file, browser):
 
     login_info = {}
     if (login_file is not None):
-        login_info = loadLoginFile(login_file)
+        login_info = load_login_file(login_file)
 
 
     if (login_type == "login_file"):
@@ -370,9 +370,9 @@ def check_file_upload(s, url, file_path, check_folder):
     """
     print("Checking if file was uploaded correctly.")
     print("downloading file")
-    downloadFile(s,  url, os.path.basename(file_path), check_folder)
+    download_file(s,  url, os.path.basename(file_path), check_folder)
     print("comparing hashes")
-    if (compareHashes(file_path, os.path.join(check_folder,"downloaded"))):
+    if (compare_hashes(file_path, os.path.join(check_folder,"downloaded"))):
         print(colored("[OK] upload succesfull: files are equal", 'green'))
     else:
         print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
@@ -383,14 +383,14 @@ def main():
     start_of_submission = datetime.now().strftime(
                     '%d.%m.%Y %H:%M:%S.%f')
 
-    config = parseArgs()
+    config = parse_args()
 
     if ("config_file" in config):
-        config = loadConfig(config["config_file"], config)
+        config = load_config(config["config_file"], config)
     elif os.path.isfile("submit_config.yml"):
-        config = loadConfig("submit_config.yml", config)
+        config = load_config("submit_config.yml", config)
 
-    config = checkConfig(config)
+    config = check_config(config)
 
     s = get_session_by_login_type(config["login_type"], config["login_file"] if "login_file" in config else None, config["browser"] if "browser" in config else None)
 
