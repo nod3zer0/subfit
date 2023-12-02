@@ -387,8 +387,8 @@ def main():
 
     if ("config_file" in config):
         config = loadConfig(config["config_file"], config)
-    elif os.path.isfile("config.yml"):
-        config = loadConfig("config.yml", config)
+    elif os.path.isfile("submit_config.yml"):
+        config = loadConfig("submit_config.yml", config)
 
     config = checkConfig(config)
 
