@@ -1,5 +1,5 @@
 
-# AutoSubmit
+# subfit: fit easy submit
 
 It is a simple script to submit your project to the studis.
 
@@ -8,7 +8,7 @@ It is a simple script to submit your project to the studis.
 - configurable with config file
 - multiple types of authentication
   - prompt for username and password
-  - login file with username and password
+  - login file with username or username and password
   - get cookie from browser (optional: needs package `browser-cookie3`)
 - automaticly compress archive before submitting
 - check file hashes after submitting
@@ -60,7 +60,21 @@ If you installed it with symbolic link. You can just use `git pull` from where y
 
 ## Usage
 
-### From commandline
+### with config file
+
+Running in same folder as config file:
+
+```bash
+submit
+```
+
+Running with config file in different folder:
+
+```bash
+submit --config <path_to_config_file>
+```
+
+### without config file
 
 Prompt for username and password:
 
@@ -78,20 +92,6 @@ Use cookie from browser:
 
 ```bash
 submit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_name>
-```
-
-### with config file
-
-Running in same folder as config file:
-
-```bash
-submit
-```
-
-Running with config file in different folder:
-
-```bash
-submit --config <path_to_config_file>
 ```
 
 ### Workflow
