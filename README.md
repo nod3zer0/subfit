@@ -144,7 +144,7 @@ username: xlogin00
 password: password
 ```
 
-if there is only username, you can use prompt and it will ask only for password
+If there is only username, it will ask for password in terminal.
 
 ```yaml
 username: xlogin00
