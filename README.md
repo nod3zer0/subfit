@@ -53,19 +53,19 @@ sudo chmod +x /usr/local/bin/submit
 Prompt for username and password:
 
 ```bash
-submit --url <studis_submission_url> --file <file_to_submit>
+submit --url "<studis_submission_url>" --file <file_to_submit>
 ```
 
 Use login file:
 
 ```bash
-submit --url <studis_submission_url> --file <file_to_submit> --login_file <login_file>
+submit --url "<studis_submission_url>" --file <file_to_submit> --login_file <login_file>
 ```
 
 Use cookie from browser:
 
 ```bash
-submit --url <studis_submission_url> --file <file_to_submit> --cookie <cookie_name>
+submit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_name>
 ```
 
 ### with config file
