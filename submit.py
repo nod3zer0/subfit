@@ -301,7 +301,11 @@ def get_submission_time(s,url):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
     supa =  soup.find_all('small', string=True)
-    return supa[0].text
+    try:
+        return supa[0].text
+    except:
+        print(colored("[ERR] submission time not found, probably not submited!", 'red'))
+        exit(1)
 
 def get_session_by_login_type(login_type, login_file, browser):
     """ gets session by login type
