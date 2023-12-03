@@ -33,6 +33,14 @@ It is a simple script to submit your project to the studis.
 
 ## Installation
 
+### Clone repository
+
+Download this repository to the folder where you want to have autosubmit installed.
+
+```bash
+git clone https://github.com/nod3zer0/AutoSubmit.git
+```
+
 ### Install requirements
 
 ```bash
@@ -45,6 +53,10 @@ pip3 install -r requirements.txt
 sudo chmod +x submit.py
 sudo ln -rs submit.py /usr/local/bin/submit   
 ```
+
+### update
+
+If you installed it with symbolic link. You can just use `git pull` from where you have downloaded this repository.
 
 ## Usage
 
