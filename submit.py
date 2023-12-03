@@ -399,7 +399,7 @@ def main():
 
     s = get_session_by_login_type(config["login_type"], config["login_file"] if "login_file" in config else None, config["browser"] if "browser" in config else None)
 
-    if ("archive_command" in config and config["archive_command"] != ""):
+    if ("archive_command" in config and config["archive_command"] != "" and config["archive_command"] is not None):
         archive_file(config["archive_command"])
 
     upload_file(s, config["url"], config["file"], config["login_type"])
