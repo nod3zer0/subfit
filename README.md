@@ -42,8 +42,8 @@ pip3 install -r requirements.txt
 ### install in usr/local/bin
 
 ```bash
-sudo cp submit.py /usr/local/bin/submit
-sudo chmod +x /usr/local/bin/submit
+sudo chmod +x submit.py
+sudo ln -rs submit.py /usr/local/bin/submit   
 ```
 
 ## Usage
