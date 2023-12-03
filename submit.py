@@ -119,7 +119,12 @@ def check_config(config):
         print(colored("[ERR] file not specified", 'red'))
         exit(1)
     if (not "login_type" in config or config["login_type"] is None):
-        config["login_type"] = "prompt"
+        if ("browser" in config):
+            config["login_type"] = "browser_cookies"
+        elif ("login_file" in config):
+            config["login_type"] = "login_file"
+        else:
+            config["login_type"] = "prompt"
     if (config["login_type"] == "login_file"):
         if (not "login_file" in config):
             print(colored("[ERR] login_file not specified", 'red'))
