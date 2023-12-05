@@ -268,9 +268,13 @@ def download_file(s, url, filename, downloadFolder):
     soup = bs.BeautifulSoup(r.text,'lxml')
 
     supa =  soup.find_all('a', string = filename)
+    if (not supa):
+        print(colored("[ERR] file not found", 'red'))
+        print(colored("[ERR] file not uploaded correctly", 'red') + colored("!!!", 'red', attrs=['blink']))
+        exit(1)
+
     downloadUrl = "https://www.vut.cz/studis" + supa[0]['href'].removeprefix(".")
     print("downloading file:" + filename + " from URL: " + downloadUrl)
-    print(downloadUrl)
     r = s.get(downloadUrl, stream=True)
     if (r.status_code == 200):
          print(colored("[OK] response: 200", 'green'))
