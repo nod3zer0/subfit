@@ -405,6 +405,23 @@ def check_file_upload(s, url, file_path, check_folder):
     else:
         print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
 
+def get_assignment_url(s, url):
+    """ gets assignment name
+    """
+    r = s.get(url, stream=True)
+    if (r.status_code == 200):
+        print(colored("[OK] response: 200", 'green'))
+    else:
+        print(colored("[WARN] response: " + r.status_code, 'yellow'))
+        exit(1)
+
+    soup = bs.BeautifulSoup(r.text,'lxml')
+    supa =  soup.select_one("a[href*='student.phtml?sn=zadani_detail&zid=']")
+
+    if (supa):
+        return "https://www.vut.cz/studis/" + supa.get('href')
+    else:
+        print(colored("[WARN] assignment name not found", 'yellow'))
 
 def main():
 
@@ -433,6 +450,7 @@ def main():
 
 
     print("")
+    print("File was succesfully uploaded to assignment at url: " + get_assignment_url(s, config["url"]))
     print("All done")
     print("submission started:\t\t" + str(start_of_submission))
     submission_time_studis = get_submission_time(s,config["url"])
