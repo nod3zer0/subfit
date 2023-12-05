@@ -165,6 +165,11 @@ def login(username, password):
 
     fdkey = loginSupa.get('value')
 
+    if (not fdkey):
+        print(colored("[ERR] fdkey not found", 'red'))
+        exit(1)
+
+
     login_data = {
     'special_p4_form' : 1,
     'login_form' : 1,
@@ -176,7 +181,14 @@ def login(username, password):
 
     }
 
-    s.post('https://www.vut.cz/login/in', data=login_data)
+    response = s.post('https://www.vut.cz/login/in', data=login_data)
+
+    if (response.status_code == 200):
+        print(colored("[OK] response: 200", 'green'))
+    else:
+        print(colored("[ERR] response: " + response.status_code, 'red'))
+        exit(1)
+
     return s
 
 
@@ -305,9 +317,9 @@ def get_submission_time(s,url):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
     supa =  soup.find_all('small', string=True)
-    try:
+    if (supa):
         return supa[0].text
-    except:
+    else:
         print(colored("[ERR] submission time not found, probably not submited!", 'red'))
         exit(1)
 
@@ -340,23 +352,26 @@ def get_session_by_login_type(login_type, login_file, browser):
         if (not browser or browser == ""):
             print(colored("[ERR] browser not specified (example: --browser chromium)", 'red'))
             exit(1)
-
-        if (browser == "chrome"):
-            cj = browser_cookie3.chrome()
-        elif (browser == "firefox"):
-            cj = browser_cookie3.firefox()
-        elif (browser == "brave"):
-            cj = browser_cookie3.brave()
-        elif (browser == "opera"):
-            cj = browser_cookie3.opera()
-        elif (browser == "edge"):
-            cj = browser_cookie3.edge()
-        elif (browser == "chromium"):
-            cj = browser_cookie3.chromium()
-        elif (browser == "vivaldi"):
-            cj = browser_cookie3.vivaldi()
-        elif (browser == "safari"):
-            cj = browser_cookie3.safari()
+        try:
+            if (browser == "chrome"):
+                cj = browser_cookie3.chrome()
+            elif (browser == "firefox"):
+                cj = browser_cookie3.firefox()
+            elif (browser == "brave"):
+                cj = browser_cookie3.brave()
+            elif (browser == "opera"):
+                cj = browser_cookie3.opera()
+            elif (browser == "edge"):
+                cj = browser_cookie3.edge()
+            elif (browser == "chromium"):
+                cj = browser_cookie3.chromium()
+            elif (browser == "vivaldi"):
+                cj = browser_cookie3.vivaldi()
+            elif (browser == "safari"):
+                cj = browser_cookie3.safari()
+        except(browser_cookie3.BrowserCookieError):
+            print(colored("[ERR] browser not found", 'red'))
+            exit(1)
         s = requests.Session()
         s.cookies = cj
     elif (login_type == "prompt"):
@@ -424,7 +439,7 @@ def main():
     print("time of submission (local): \t" + str(time_of_submission_local.strftime(
                     '%d.%m.%Y %H:%M:%S.%f')))
     print("time of submission (studis):\t" + str(submission_time_studis))
-    print("time toked: " +  str((time_of_submission_local - datetime.strptime(start_of_submission,'%d.%m.%Y %H:%M:%S.%f')).total_seconds() ) + " seconds")
+    print("time taken: " +  str((time_of_submission_local - datetime.strptime(start_of_submission,'%d.%m.%Y %H:%M:%S.%f')).total_seconds() ) + " seconds")
 
 if __name__ == "__main__":
     main()
