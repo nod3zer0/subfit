@@ -407,6 +407,7 @@ def main():
         archive_file(config["archive_command"])
 
     upload_file(s, config["url"], config["file"], config["login_type"])
+    time_of_submission_local = datetime.now();
 
     if ("check" in config and config["check"]):
         check_file_upload(s, config["url"], config["file"], config["check_folder"])
@@ -414,8 +415,12 @@ def main():
 
     print("")
     print("All done")
-    print("submission started: " + str(start_of_submission))
-    print("time of submission: " + str(get_submission_time(s,config["url"])))
+    print("submission started:\t\t" + str(start_of_submission))
+    submission_time_studis = get_submission_time(s,config["url"])
+    print("time of submission (local): \t" + str(time_of_submission_local.strftime(
+                    '%d.%m.%Y %H:%M:%S.%f')))
+    print("time of submission (studis):\t" + str(submission_time_studis))
+    print("time toked: " +  str((time_of_submission_local - datetime.strptime(start_of_submission,'%d.%m.%Y %H:%M:%S.%f')).total_seconds() ) + " seconds")
 
 if __name__ == "__main__":
     main()
