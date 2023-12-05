@@ -406,8 +406,9 @@ def check_file_upload(s, url, file_path, check_folder):
         print(colored("[ERR] upload unsuccesfull: files are not equal", 'red'))
 
 def get_assignment_url(s, url):
-    """ gets assignment name
+    """ gets assignment url
     """
+    print("getting assignment url")
     r = s.get(url, stream=True)
     if (r.status_code == 200):
         print(colored("[OK] response: 200", 'green'))
@@ -448,16 +449,17 @@ def main():
     if ("check" in config and config["check"]):
         check_file_upload(s, config["url"], config["file"], config["check_folder"])
 
+    assignment_url = get_assignment_url(s, config["url"])
 
     print("")
-    print("File was succesfully uploaded to assignment at url: " + get_assignment_url(s, config["url"]))
+    print("File was succesfully uploaded to assignment at url: " + assignment_url)
     print("All done")
     print("submission started:\t\t" + str(start_of_submission))
     submission_time_studis = get_submission_time(s,config["url"])
     print("time of submission (local): \t" + str(time_of_submission_local.strftime(
                     '%d.%m.%Y %H:%M:%S.%f')))
     print("time of submission (studis):\t" + str(submission_time_studis))
-    print("time taken: " +  str((time_of_submission_local - datetime.strptime(start_of_submission,'%d.%m.%Y %H:%M:%S.%f')).total_seconds() ) + " seconds")
+    print("time taken: \t\t\t" +  str((time_of_submission_local - datetime.strptime(start_of_submission,'%d.%m.%Y %H:%M:%S.%f')).total_seconds() ) + " seconds")
 
 if __name__ == "__main__":
     main()
