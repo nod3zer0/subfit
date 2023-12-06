@@ -147,9 +147,19 @@ def load_login_file(path):
     if (not os.path.isfile(path)):
         print(colored("[ERR] login_file not found", 'red'))
         exit(1)
-
+    login_list = []
     with open(path) as f:
         login_list = yaml.load(f, Loader=yaml.FullLoader)
+
+    if (not isinstance(login_list,dict)):
+        print(colored("[ERR] login_file has syntax error", 'red'))
+        exit(1)
+
+    if (not login_list):
+        print(colored("[ERR] login_file is empty", 'red'))
+        exit(1)
+
+
 
     return login_list
 
