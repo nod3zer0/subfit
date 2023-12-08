@@ -315,7 +315,7 @@ def download_file(s, url, filename, downloadFolder):
     r = s.get(url, stream=True)
     soup = bs.BeautifulSoup(r.text,'lxml')
 
-    supa =  soup.find_all('a', string = filename)
+    supa =  soup.find_all('a', string = os.path.dirname(filename) + os.path.basename(filename).lower())
     if (not supa):
         print(colored("[ERR] file not found", 'red'))
         print(colored("[ERR] file not uploaded correctly", 'red') + colored("!!!", 'red', attrs=['blink']))

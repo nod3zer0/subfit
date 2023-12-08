@@ -93,13 +93,13 @@ subfit --url "<studis_submission_url>" --file <file_to_submit>
 Use login file:
 
 ```bash
-subfit --url "<studis_submission_url>" --file <file_to_submit> --login_file <login_file>
+subfit --url "<studis_submission_url>" --file <file_to_submit> --login_type login_file --login_file <login_file> 
 ```
 
 Use cookie from browser:
 
 ```bash
-subfit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_name>
+subfit --url "<studis_submission_url>" --file <file_to_submit> --login_type browser_cookies --browser chrome
 ```
 
 ## Configuration file
@@ -142,6 +142,7 @@ Specifying any of the listed value as command line arguments overrides stored va
   - **login_file** - use login file (path specified in `login_file`)
   - **prompt** - prompt for username and password
 - `browser` - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.
+    - accepted values: chrome, firefox, brave, opera, edge, chromium, vivaldi, safari 
 - `login_file` - destination path for yaml login file storing user credentials to Studis. Applicable only with *login_file* as a value for login type.
 
 ## Example login.yml file
