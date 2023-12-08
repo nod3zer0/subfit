@@ -34,7 +34,7 @@ subfit is a simple script to submit your project to the studis.
 
 ### Clone repository
 
-Download this repository to the folder where you want to have autosubmit installed.
+Download this repository to the folder where you want to have subfit installed.
 
 ```bash
 git clone https://github.com/nod3zer0/AutoSubmit.git
@@ -49,8 +49,8 @@ pip3 install -r requirements.txt
 ### install in usr/local/bin
 
 ```bash
-sudo chmod +x submit.py
-sudo ln -rs submit.py /usr/local/bin/submit   
+sudo chmod +x subfit.py
+sudo ln -rs subfit.py /usr/local/bin/subfit   
 ```
 
 ### Updating
@@ -60,10 +60,9 @@ If you installed it with symbolic link. You can just use `git pull` from where y
 ## Command line usage
 
 ```bash
-submit [(-u | --url) "<studis_submission_url>"] [(-f | --file) <file_to_submit>]
-[-l | --login_type (browser_cookies | login_file | prompt)]
-[--cookie <cookie_name> | --login_file <login_file>]
-[(-a | --archive_command) <archive_command>] [-c | --check]
+subfit (-u | --url) "<studis_submission_url>" (-f | --file) <file_to_submit>
+[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt)]
+[(-a | --archive_command) <archive_command>] [(-c | --check --check_folder <path_to_check_folder)]
 ```
 
 Arguments are described in configuration section. Command line value have precedence over configuration values.
@@ -79,7 +78,7 @@ submit
 Running with config file in different folder:
 
 ```bash
-submit --config <path_to_config_file>
+subfit --config <path_to_config_file>
 ```
 
 ### Without config file
@@ -87,19 +86,19 @@ submit --config <path_to_config_file>
 Prompt for username and password:
 
 ```bash
-submit --url "<studis_submission_url>" --file <file_to_submit>
+subfit --url "<studis_submission_url>" --file <file_to_submit>
 ```
 
 Use login file:
 
 ```bash
-submit --url "<studis_submission_url>" --file <file_to_submit> --login_file <login_file>
+subfit --url "<studis_submission_url>" --file <file_to_submit> --login_file <login_file>
 ```
 
 Use cookie from browser:
 
 ```bash
-submit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_name>
+subfit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_name>
 ```
 
 ## Configuration file
@@ -169,7 +168,7 @@ During submission, the password prompt will appear if the password field is omit
       1. set `check_folder` to folder where to download file for checking
    5. set `login_type` to login type
       1. set `login_file` to path to login file
-2. run `autosubmit.py` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
+2. run `subfit` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
 
 ## Parsing values
 
