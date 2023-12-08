@@ -1,6 +1,6 @@
 # subfit: fit easy submit
 
-subfit is a simple script to submit your project to the studis.
+Subfit is a simple script to submit your project to the studis.
 
 ## Features
 
@@ -8,7 +8,7 @@ subfit is a simple script to submit your project to the studis.
 - supports multiple types of authentication
   - prompt for username and password
   - use login file with username or username and password
-  - gets cookie from browser (optional: needs package `browser-cookie3`)
+  - gets cookie from the browser (optional: needs package `browser-cookie3`)
 - automatically compresses archive before submitting
 - downloads the archive after submission from Studis and compares hashes with original file 
 - prints time of submission from studis
@@ -17,13 +17,13 @@ subfit is a simple script to submit your project to the studis.
 
 1. creates archive if specified
 2. gets login information
-3. checks if file already submitted
+3. checks if the file has already been submitted
    1. removes old submission
 4. submits file
-5. checks if file was submitted correctly (`--check` option)
+5. checks if the file was submitted correctly (`--check` option)
    1. downloads file into `--check_folder`
    2. compares hashes
-6. gets time of submission in studis, and prints its value
+6. gets the time of submission in studis, and prints its value
 
 ## Requirements
 
@@ -65,17 +65,17 @@ subfit (-u | --url) "<studis_submission_url>" (-f | --file) <file_to_submit>
 [(-a | --archive_command) <archive_command>] [(-c | --check --check_folder <path_to_check_folder)]
 ```
 
-Arguments are described in configuration section. Command line value have precedence over configuration values.
+Arguments are described in the configuration section. Command line values have precedence over configuration values. Required arguments need to be specified either in command line or in the config file.
 
 ### With config file
 
-Running in same folder as config file:
+Running in the same folder as the config file:
 
 ```bash
 submit
 ```
 
-Running with config file in different folder:
+Running with the config file in a different folder:
 
 ```bash
 subfit --config <path_to_config_file>
@@ -135,12 +135,12 @@ Specifying any of the listed value as command line arguments overrides stored va
 - `archive_command` - command for creating archive (leave blank if you dont want to create archive) (short command line argument: `-a`)
 - `url` - url of the submission page in Studis (image bellow) (short command line argument: `-u`) ![submit_page](./docs/img/submit_page.png)
 - `check` - verifies uploaded file by downloading it from Studis and comparing hashes with the original file (short command line argument: `-c`)
-  - `check_folder` - destination path for downloaded files from studis (folders will be created, files will be overwritten!)
+  - `check_folder` - destination path for downloaded files from studis (folders will be created, and files will be overwritten!)
 - `login_type` - used method for obtaining user credentials during submission (short command line argument: `-l`). Applicable values are:
-  - **browser_cookies** - get cookie from browser (optional: needs package `browser-cookie3`)
+  - **browser_cookies** - get the cookie from the browser (optional: needs package `browser-cookie3`)
   - **login_file** - use login file (path specified in `login_file`)
   - **prompt** - prompt for username and password
-- `browser` - for login with browser cookies fill in browser. Applicable only with *browser_cookies* as a value for login type.
+- `browser` - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.
 - `login_file` - destination path for yaml login file storing user credentials to Studis. Applicable only with *login_file* as a value for login type.
 
 ## Example login.yml file
@@ -150,7 +150,7 @@ username: xlogin00
 password: password
 ```
 
-Password field is optional in login file:
+The password field is optional in the login file:
 
 ```yaml
 username: xlogin00
@@ -161,11 +161,11 @@ During submission, the password prompt will appear if the password field is omit
 ## How to prepare subfit for your project
 
 1. create config file in your project folder
-   1. set `file` to file you want to submit (usually archive file with specified format by the  project assignment)
+   1. set `file` to the file you want to submit (usually archive file with the specified format by the  project assignment)
    2. optionally set `archive_command` to any valid bash command for creating archive before the submission begins
-   3. set `url` to submission url project page![submit_page](./docs/img/submit_page.png)
+   3. set `url` to the submission url project page![submit_page](./docs/img/submit_page.png)
    4. optionally set `check` to true to verify file after upload
-      1. set `check_folder` to folder where to download file for checking
+      1. set `check_folder` to the folder where to download file for checking
    5. set `login_type` to login type
       1. set `login_file` to path to login file
 2. run `subfit` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
@@ -174,11 +174,11 @@ During submission, the password prompt will appear if the password field is omit
 
 ### How does login work?
 
-Each time login page is refreshed, it gets new sv[fdkey] from server. So this script first gets this value from login page, and then sends it back with username, password and timestamp, to get session cookie.
+Each time the login page is refreshed, it gets a new sv[fdkey] from the server. So this script first gets this value from the login page, and then sends it back with username, password, and timestamp, to get the session cookie.
 
 ### How does file submission work?
 
-First it gets the page with submission form, and gets the s_key and s_tkey (which is new every time page gets refreshed). Then it sends the file these values and the session.
+First, it gets the page with the submission form and gets the s_key and s_tkey (which is new every time the page gets refreshed). Then it sends the file these values and the session.
 
 ## TODO
 
