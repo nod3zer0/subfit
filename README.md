@@ -8,7 +8,7 @@ Subfit is a simple script to submit your project to the studis.
 - supports multiple types of authentication
   - prompt for username and password
   - use login file with username or username and password
-  - gets cookie from the browser (optional: needs package `browser-cookie3`)
+  - gets cookie from the browser
 - automatically compresses archive before submitting
 - downloads the archive after submission from Studis and compares hashes with original file 
 - prints time of submission from studis
@@ -28,6 +28,7 @@ Subfit is a simple script to submit your project to the studis.
 ## Requirements
 
 - python3
+- pip3
 - Rest is in `requirements.txt`
 
 ## Installation
@@ -69,10 +70,10 @@ Arguments are described in the configuration section. Command line values have p
 
 ### With config file
 
-Running in the same folder as the config file:
+Running in the same folder as the config file (with name subfit_config.yml):
 
 ```bash
-submit
+subfit
 ```
 
 Running with the config file in a different folder:
@@ -103,7 +104,7 @@ subfit --url "<studis_submission_url>" --file <file_to_submit> --cookie <cookie_
 
 ## Configuration file
 
-The config file is a simple yaml file.
+The config file is a simple yaml file. If it is named `subfit_config.yml` it will be loaded automatically. 
 
 Example config file:
 
@@ -129,7 +130,7 @@ login_type: login_file
 
 ## Configuration values
 
-Specifying any of the listed value as command line arguments overrides stored value in configuration.
+Specifying any of the listed value as command line arguments overrides stored value in configuration. If the config is named `subfit_config.yml` it will be loaded automatically.
 
 - `file` - path to file to submit (short command line argument: `-f`)
 - `archive_command` - command for creating archive (leave blank if you dont want to create archive) (short command line argument: `-a`)
@@ -137,7 +138,7 @@ Specifying any of the listed value as command line arguments overrides stored va
 - `check` - verifies uploaded file by downloading it from Studis and comparing hashes with the original file (short command line argument: `-c`)
   - `check_folder` - destination path for downloaded files from studis (folders will be created, and files will be overwritten!)
 - `login_type` - used method for obtaining user credentials during submission (short command line argument: `-l`). Applicable values are:
-  - **browser_cookies** - get the cookie from the browser (optional: needs package `browser-cookie3`)
+  - **browser_cookies** - get the cookie from the browser
   - **login_file** - use login file (path specified in `login_file`)
   - **prompt** - prompt for username and password
 - `browser` - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.
@@ -167,7 +168,8 @@ During submission, the password prompt will appear if the password field is omit
    4. optionally set `check` to true to verify file after upload
       1. set `check_folder` to the folder where to download file for checking
    5. set `login_type` to login type
-      1. set `login_file` to path to login file
+      1. for example `login_type: login_file`
+          1. set `login_file` to path to login file
 2. run `subfit` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
 
 ## Parsing values

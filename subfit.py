@@ -42,8 +42,9 @@ def parse_args():
         # checking each argument
         for currentArgument, currentValue in arguments:
 
-            if currentArgument in ("-h", "--Help"):
-                print ("Displaying Help")
+            if currentArgument in ("-h", "--help"):
+                print_help()
+                exit(0)
             elif currentArgument in ("-f", "--file"):
                 config['file'] = currentValue
             elif currentArgument in ("-a", "--archive_command"):
@@ -68,6 +69,31 @@ def parse_args():
         print (str(err))
         sys.exit(2)
     return config
+
+def print_help():
+    """prints help
+    """
+    print("subfit")
+    print("Simple script to submit your project to the studis.")
+    print("")
+    print("usage:")
+    print("subfit (-u | --url) \"<studis_submission_url>\" (-f | --file) <file_to_submit>")
+    print("[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt)]")
+    print("[(--config_file <path_to_config_file>)]")
+    print("")
+    print("argument description:")
+    print("- file - path to file to submit (short command line argument: -f)")
+    print("- archive_command - command for creating archive (leave blank if you dont want to create archive) (short command line argument: -a)")
+    print("- url - url of the submission page in Studis (image bellow) (short command line argument: -u) ![submit_page](./docs/img/submit_page.png)")
+    print("- check - verifies uploaded file by downloading it from Studis and comparing hashes with the original file (short command line argument: -c)")
+    print("  - check_folder - destination path for downloaded files from studis (folders will be created, and files will be overwritten!)")
+    print("- login_type - used method for obtaining user credentials during submission (short command line argument: -l). Applicable values are:")
+    print("  - browser_cookies - get the cookie from the browser")
+    print("  - login_file - use login file (path specified in login_file)")
+    print("  - prompt - prompt for username and password")
+    print("- browser - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.")
+    print("- login_file - destination path for yaml login file storing user credentials to Studis. Applicable only with *login_file* as a value for login type.")
+
 
 
 def load_config(path, config):
@@ -440,11 +466,10 @@ def main():
                     '%d.%m.%Y %H:%M:%S.%f')
 
     config = parse_args()
-
     if ("config_file" in config):
         config = load_config(config["config_file"], config)
-    elif os.path.isfile("submit_config.yml"):
-        config = load_config("submit_config.yml", config)
+    elif os.path.isfile("subfit_config.yml"):
+        config = load_config("subfit_config.yml", config)
 
     config = check_config(config)
 
