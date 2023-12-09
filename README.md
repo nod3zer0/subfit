@@ -38,7 +38,7 @@ Subfit is a simple script to submit your project to the studis.
 Download this repository to the folder where you want to have subfit installed.
 
 ```bash
-git clone https://github.com/nod3zer0/AutoSubmit.git
+git clone https://github.com/nod3zer0/subfit.git
 ```
 
 ### Install requirements
