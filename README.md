@@ -58,6 +58,19 @@ sudo ln -rs subfit.py /usr/local/bin/subfit
 
 If you installed it with symbolic link. You can just use `git pull` from where you have downloaded this repository.
 
+## How to prepare subfit for your project
+
+1. create config file in your project folder
+   1. set `file` to the file you want to submit (usually archive file with the specified format by the  project assignment)
+   2. optionally set `archive_command` to any valid bash command for creating archive before the submission begins
+   3. set `url` to the submission url project page![submit_page](./docs/img/submit_page.png)
+   4. optionally set `check` to true to verify file after upload
+      1. set `check_folder` to the folder where to download file for checking
+   5. set `login_type` to login type
+      1. for example `login_type: login_file`
+          1. set `login_file` to path to login file
+2. run `subfit` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
+
 ## Command line usage
 
 ```bash
@@ -160,18 +173,6 @@ username: xlogin00
 
 During submission, the password prompt will appear if the password field is omitted.
 
-## How to prepare subfit for your project
-
-1. create config file in your project folder
-   1. set `file` to the file you want to submit (usually archive file with the specified format by the  project assignment)
-   2. optionally set `archive_command` to any valid bash command for creating archive before the submission begins
-   3. set `url` to the submission url project page![submit_page](./docs/img/submit_page.png)
-   4. optionally set `check` to true to verify file after upload
-      1. set `check_folder` to the folder where to download file for checking
-   5. set `login_type` to login type
-      1. for example `login_type: login_file`
-          1. set `login_file` to path to login file
-2. run `subfit` in your project folder. The file will be submitted and optionally verified if `check` is set to true.
 
 ## Parsing values
 
