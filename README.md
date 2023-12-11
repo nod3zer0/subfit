@@ -195,12 +195,14 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+      - name: install subfit
+        run: |
+          git clone https://github.com/nod3zer0/subfit
+          cd subfit
+          pip3 install -r requirements.txt
       - name: run  subfit
         run: |
-          git clone https://github.com/nod3zer0/subfit # Replace with your repository URL
-          cd subfit # Replace with your repository name
-          git checkout -b dev origin/dev
-          pip3 install -r requirements.txt
+          cd subfit
           python3 subfit.py --login_type args --username ${{ secrets.username }} --password ${{ secrets.password }} --file ../<file> --url "<url>"
 ```
 
