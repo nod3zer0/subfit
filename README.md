@@ -182,6 +182,28 @@ During submission, the password prompt will appear if the password field is omit
 
 TODO
 
+##### github actions file
+
+```yaml
+name: Subfit
+on: [push]
+jobs:
+  subfit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: run  subfit
+        run: |
+          git clone https://github.com/nod3zer0/subfit # Replace with your repository URL
+          cd subfit # Replace with your repository name
+          git checkout -b dev origin/dev
+          pip3 install -r requirements.txt
+          python3 subfit.py --login_type args --username ${{ secrets.username }} --password ${{ secrets.password }} --file ../<file> --url "<url>"
+```
+
 ## Parsing values
 
 ### How does login work?
