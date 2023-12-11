@@ -5,13 +5,13 @@ archive_command:
 # url of where to upload file
 url:
 #compares hasesh of uploaded and local file after upload
-check: true
+check:
 #where to download file after uploading for hash checking
 #(folders will be created, files will be owerwritten!)
-check_folder: test_folder
+check_folder:
 # for login with browser cookies fill in browser
 browser:
 # fill in path to yaml file with login information
-login_file: /home/username/secrets/login.yml
+login_file:
 #broser_cokies/login_file/prompt
-login_type: login_file
+login_type:
