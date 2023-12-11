@@ -32,7 +32,7 @@ def parse_args():
     options = "hf:a:u:cb:l:t:"
 
     # Long options
-    long_options = ["help","config_file=","file=", "archive_command=", "url=", "check", "check_folder=", "browser=", "login_file=", "login_type=" ]
+    long_options = ["help","config_file=","file=", "archive_command=", "url=", "check", "check_folder=", "browser=", "login_file=", "login_type=", "username=", "password=" ]
 
 
     try:
@@ -63,6 +63,10 @@ def parse_args():
                 config['check_folder'] = currentValue
             elif currentArgument in ("--config_file"):
                 config['config_file'] = currentValue
+            elif currentArgument in ("--username"):
+                config['username'] = currentValue
+            elif currentArgument in ("--password"):
+                config['password'] = currentValue
 
     except getopt.error as err:
         # output error, and return with an error code
@@ -78,7 +82,7 @@ def print_help():
     print("")
     print("usage:")
     print("subfit (-u | --url) \"<studis_submission_url>\" (-f | --file) <file_to_submit>")
-    print("[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt)]")
+    print("[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt | args --username <username> --password <password>]))]")
     print("[(--config_file <path_to_config_file>)]")
     print("")
     print("argument description:")
@@ -91,9 +95,11 @@ def print_help():
     print("  - browser_cookies - get the cookie from the browser")
     print("  - login_file - use login file (path specified in login_file)")
     print("  - prompt - prompt for username and password")
+    print("  - args - use username and password from arguments")
     print("- browser - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.")
     print("- login_file - destination path for yaml login file storing user credentials to Studis. Applicable only with *login_file* as a value for login type.")
-
+    print("- username - username for login. Applicable only with *args* as a value for login type.")
+    print("- password - password for login. Applicable only with *args* as a value for login type.")
 
 
 def load_config(path, config):
@@ -359,9 +365,15 @@ def get_submission_time(s,url):
         print(colored("[ERR] submission time not found, probably not submited!", 'red'))
         exit(1)
 
-def get_session_by_login_type(login_type, login_file, browser):
+def get_session_by_login_type(config):
     """ gets session by login type
     """
+
+    login_type = config["login_type"]
+    login_file = config["login_file"] if "login_file" in config else None
+    browser = config["browser"] if "browser" in config else None
+    password = config["password"] if "password" in config else None
+    username = config["username"] if "username" in config else None
 
     login_info = {}
     if (login_file is not None):
@@ -376,6 +388,14 @@ def get_session_by_login_type(login_type, login_file, browser):
             print(colored("[WARN] password not specified in login_file", 'yellow'))
             login_info["password"] = getpass.getpass(prompt='Enter password: ', stream=None)
         s = login(login_info["username"], login_info["password"]);
+    elif (login_type == "args"):
+        if (username is None):
+            print(colored("[ERR] username not specified", 'red'))
+            exit(1)
+        if (password is None):
+            print(colored("[ERR] password not specified", 'red'))
+            exit(1)
+        s = login(username, password)
     elif (login_type == "browser_cookies"):
 
         if (browser_cookie3 is None):
@@ -473,8 +493,9 @@ def main():
 
     config = check_config(config)
 
-    s = get_session_by_login_type(config["login_type"], config["login_file"] if "login_file" in config else None, config["browser"] if "browser" in config else None)
+    #s = get_session_by_login_type(config["login_type"], config["login_file"] if "login_file" in config else None, config["browser"] if "browser" in config else None)
 
+    s = get_session_by_login_type(config)
     if ("archive_command" in config and config["archive_command"] != "" and config["archive_command"] is not None):
         archive_file(config["archive_command"])
 

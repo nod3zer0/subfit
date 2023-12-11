@@ -9,8 +9,9 @@ Subfit is a simple script to submit your project to the studis.
   - prompt for username and password
   - use login file with username or username and password
   - gets cookie from the browser
+  - gets login information from commandline arguments
 - automatically compresses archive before submitting
-- downloads the archive after submission from Studis and compares hashes with original file 
+- downloads the archive after submission from Studis and compares hashes with original file
 - prints time of submission from studis
 
 ## What does it do when submitting
@@ -51,7 +52,7 @@ pip3 install -r requirements.txt
 
 ```bash
 sudo chmod +x subfit.py
-sudo ln -rs subfit.py /usr/local/bin/subfit   
+sudo ln -rs subfit.py /usr/local/bin/subfit
 ```
 
 ### Updating
@@ -75,7 +76,7 @@ If you installed it with symbolic link. You can just use `git pull` from where y
 
 ```bash
 subfit (-u | --url) "<studis_submission_url>" (-f | --file) <file_to_submit>
-[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt)]
+[-l | --login_type (browser_cookies --browser <browser>) | (login_file --login_file <path_to_login_file>) | prompt | args --username <username> --pasword <password>)]
 [(-a | --archive_command) <archive_command>] [(-c | --check --check_folder <path_to_check_folder)]
 ```
 
@@ -106,7 +107,7 @@ subfit --url "<studis_submission_url>" --file <file_to_submit>
 Use login file:
 
 ```bash
-subfit --url "<studis_submission_url>" --file <file_to_submit> --login_type login_file --login_file <login_file> 
+subfit --url "<studis_submission_url>" --file <file_to_submit> --login_type login_file --login_file <login_file>
 ```
 
 Use cookie from browser:
@@ -117,7 +118,7 @@ subfit --url "<studis_submission_url>" --file <file_to_submit> --login_type brow
 
 ## Configuration file
 
-The config file is a simple yaml file. If it is named `subfit_config.yml` it will be loaded automatically. 
+The config file is a simple yaml file. If it is named `subfit_config.yml` it will be loaded automatically.
 
 Example config file:
 
@@ -155,7 +156,7 @@ Specifying any of the listed value as command line arguments overrides stored va
   - **login_file** - use login file (path specified in `login_file`)
   - **prompt** - prompt for username and password
 - `browser` - for login with browser cookies fill in the browser. Applicable only with *browser_cookies* as a value for login type.
-    - accepted values: chrome, firefox, brave, opera, edge, chromium, vivaldi, safari 
+    - accepted values: chrome, firefox, brave, opera, edge, chromium, vivaldi, safari
 - `login_file` - destination path for yaml login file storing user credentials to Studis. Applicable only with *login_file* as a value for login type.
 
 ## Example login.yml file
@@ -173,6 +174,13 @@ username: xlogin00
 
 During submission, the password prompt will appear if the password field is omitted.
 
+## Tutorials
+
+### github actions
+
+#### submit when pushing to master
+
+TODO
 
 ## Parsing values
 
