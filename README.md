@@ -12,8 +12,8 @@ Subfit is a simple script to submit your project to the studis.
 
 - configurable with config file
 - supports multiple types of authentication
-  - prompt for username and password
-  - use login file with username or username and password
+  - prompt for username and password ❌ (not working at the moment)
+  - use login file with username or username and password ❌ (not working at the moment)
   - gets cookie from the browser
 - automatically compresses archive before submitting
 - downloads the archive after submission from Studis and compares hashes with original file 
