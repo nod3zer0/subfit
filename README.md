@@ -1,3 +1,9 @@
+The project is now unmaintained as I am no longer studying at VUT FIT.
+If anyone is still interested in this project, feel free to message me or create an issue, and I will take a look. PRs are still welcome.
+
+At the moment password login is not working as VUT FIT changed their login screen.
+
+
 # subfit: fit easy submit
 
 Subfit is a simple script to submit your project to the studis.
